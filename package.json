@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/mdeggers84/bamazon#readme",
   "dependencies": {
+    "easy-table": "^1.1.0",
+    "inquirer": "^3.0.6",
     "prompt": "^1.0.0"
   }
 }
