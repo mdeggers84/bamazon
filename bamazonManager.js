@@ -1,7 +1,9 @@
+// requires used node packages
 var mysql = require('mysql');
 var inquirer = require('inquirer');
 var Table = require('easy-table');
 
+// sets up parameters for mysql connection
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -9,6 +11,7 @@ var connection = mysql.createConnection({
   database: 'bamazon'
 });
 
+// confirms whether the user wants to end the program
 function endConfirm() {
   inquirer.prompt([
     {
@@ -25,15 +28,15 @@ function endConfirm() {
   });
 }
 
+// lists current products available for sale
 function listProducts() {
   var query = 'SELECT * FROM products';
-  // var data = [];
   var t = new Table();
 
   connection.query(query, function (err, res) {
     console.log('Current Product Inventory:\n--------------------------');
 
-    // data.push(res[i]);
+    // sets up easy-table with current dataset
     res.forEach(function (product) {
       t.cell('Item ID', product.item_id);
       t.cell('Name', product.product_name);
@@ -43,20 +46,20 @@ function listProducts() {
       t.newRow();
     });
 
+    // prints easy-table to screen
     console.log(t.toString());
     endConfirm();
   });
 }
 
+// views items with an inventory less than or equal to 5
 function viewLowInv() {
   var query = 'SELECT * FROM products WHERE stock_quantity <= 5';
-  // var data = [];
   var t = new Table();
 
   connection.query(query, function (err, res) {
     console.log('Low Inventory:\n--------------------------');
 
-    // data.push(res[i]);
     res.forEach(function (product) {
       t.cell('Item ID', product.item_id);
       t.cell('Name', product.product_name);
@@ -71,6 +74,7 @@ function viewLowInv() {
   });
 }
 
+// allows user to increase/decrease quantity of items currently in inventory
 function addToInv() {
   var query = 'SELECT item_id, product_name, stock_quantity FROM products';
   var t = new Table();
@@ -124,10 +128,11 @@ function addToInv() {
       var newQty = product.stock_quantity + parseInt(answer.qty, 10);
       query = 'UPDATE products SET ? WHERE ?';
 
-      connection.query(query, [{ stock_quantity: newQty }, { item_id: answer.id }], function (err, res) {
-        if (err) throw err;
-        endConfirm();
-      });
+      connection.query(query, [
+        { stock_quantity: newQty }, { item_id: answer.id }], function (err) {
+          if (err) throw err;
+          endConfirm();
+        });
     });
   });
 }
