@@ -12,29 +12,38 @@ var connection = mysql.createConnection({
 });
 
 // updates stock_quantity in the table and prints total price to console
-function completeOrder(id, qty, stock, price) {
+function completeOrder(id, qty, stock, price, dept, pSales, dSales) {
   var newQty = stock - qty;
-  var total = price * qty;
-  var query = 'UPDATE products SET ? WHERE ?';
+  var currTotal = price * qty;
+  var productSales = pSales + currTotal;
+  var deptSales = dSales + currTotal;
 
-  connection.query(query, [{ stock_quantity: newQty }, { item_id: id }], function (err) {
+  connection.query('UPDATE products SET ? WHERE ?', [
+    { stock_quantity: newQty, product_sales: productSales }, { item_id: id }], function (err) {
+      if (err) throw err;
+    });
+
+  connection.query('UPDATE departments SET ? WHERE ?', [
+    { total_sales: deptSales }, { department_name: dept }
+  ], function (err) {
     if (err) throw err;
   });
 
-  console.log('Thank you for your purchase. Your total is $' + total.toFixed(2) + '.');
+
+  console.log('Thank you for your purchase. Your total is $' + currTotal.toFixed(2) + '.');
 }
 
 // checks if there are enough items in inv to complete purchase
 // if there are, completes the order. If not, restarts program.
 function invCheck(id, qty) {
-  var query = 'SELECT stock_quantity, price FROM products WHERE ?';
+  var query = 'SELECT * FROM products LEFT JOIN departments ON products.department_name = departments.department_name WHERE ?';
   connection.query(query, { item_id: id }, function (err, res) {
     if (err) throw err;
-    if (res.stock_quantity < qty) {
+    if (res[0].stock_quantity < qty) {
       console.log('Insufficient quantity!');
       promptUser();
     } else {
-      completeOrder(id, qty, res[0].stock_quantity, res[0].price);
+      completeOrder(id, qty, res[0].stock_quantity, res[0].price, res[0].department_name, res[0].product_sales, res[0].total_sales);
       connection.end();
     }
   });
@@ -71,7 +80,9 @@ function startApp() {
     res.forEach(function (product) {
       t.cell('Item ID', product.item_id);
       t.cell('Name', product.product_name);
-      t.cell('Qty', product.stock_quantity);
+      t.cell('Dept. Name', product.department_name);
+      t.cell('Price', product.price, Table.number(2));
+      t.cell('Qty', product.stock_quantity, Table.number(0));
       t.newRow();
     });
     console.log(t.toString());

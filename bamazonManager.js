@@ -11,6 +11,7 @@ var connection = mysql.createConnection({
   database: 'bamazon'
 });
 
+// display updated table
 function displayUpdates(id) {
   var query = 'SELECT * FROM products WHERE ?';
   var t = new Table();
@@ -32,6 +33,7 @@ function displayUpdates(id) {
     console.log(t.toString());
   });
 }
+
 // lists current products available for sale
 function listProducts() {
   var query = 'SELECT * FROM products';
@@ -142,7 +144,7 @@ function addToInv() {
 }
 
 // allows user to add a new product (row) to the table
-function addNewProduct() {
+function addNewProduct(deptArr) {
   inquirer.prompt([
     {
       type: 'input',
@@ -150,8 +152,9 @@ function addNewProduct() {
       name: 'product_name'
     },
     {
-      type: 'input',
+      type: 'list',
       message: 'Department Name:',
+      choices: deptArr,
       name: 'department_name'
     },
     {
@@ -228,7 +231,13 @@ function startApp() {
     } else if (answer.choice === 'Add to Inventory') {
       addToInv();
     } else if (answer.choice === 'Add New Product') {
-      addNewProduct();
+      connection.query('SELECT department_name FROM departments', function (err, res) {
+        var deptArr = [];
+        for (var i = 0; i < res.length; i++) {
+          deptArr.push(res[i].department_name);
+        }
+        addNewProduct(deptArr);
+      });
     }
   });
 }

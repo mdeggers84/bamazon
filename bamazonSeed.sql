@@ -15,12 +15,12 @@ INSERT INTO products
   (product_name, department_name, price, stock_quantity)
 VALUES
   ('Bicycle', 'Toys', 500, 10),
-  ('Boots', 'Shoes', 50, 12),
+  ('Boots', 'Apparel', 50, 12),
   ('Black T-Shirt', 'Apparel', 12.95, 20),
-  ('Mass Effect: Andromeda', 'Video Games', 59.99, 5),
-  ('Guardians of The Galaxy', 'Movies', 19.99, 15),
-  ('Dress Shoes', 'Shoes', 30, 8),
-  ('Resident Evil 7', 'Video Games', 59.99, 2),
-  ('Crockpot', 'Appliances', 100, 22),
-  ('Toaster', 'Appliances', 12, 13),
+  ('Mass Effect: Andromeda', 'Entertainment', 59.99, 5),
+  ('Guardians of The Galaxy', 'Entertainment', 19.99, 15),
+  ('Dress Shoes', 'Apparel', 30, 8),
+  ('Resident Evil 7', 'Entertainment', 59.99, 2),
+  ('Crockpot', 'Electronics', 100, 22),
+  ('Toaster', 'Electronics', 12, 13),
   ('Sloth', 'Toys', 3.14, 42);
