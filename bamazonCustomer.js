@@ -55,12 +55,12 @@ function promptUser() {
     properties: {
       id: {
         description: 'Please enter the id of the product you would like to buy.',
-        pattern: /^\d+$/,
+        pattern: /^[1-9][0-9]*$/,
         message: 'You must choose a number.'
       },
       qty: {
         description: 'How many would you like to purchase?',
-        pattern: /^\d+$/,
+        pattern: /^[1-9][0-9]*$/,
         message: 'You must choose a number.'
       }
     }
