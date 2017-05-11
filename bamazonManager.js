@@ -11,23 +11,27 @@ var connection = mysql.createConnection({
   database: 'bamazon'
 });
 
-// confirms whether the user wants to end the program
-function endConfirm() {
-  inquirer.prompt([
-    {
-      type: 'confirm',
-      message: 'Would you like to choose another option?',
-      name: 'confirm'
-    }
-  ]).then(function (answer) {
-    if (answer.confirm) {
-      startApp();
-    } else {
-      connection.end();
-    }
+function displayUpdates(id) {
+  var query = 'SELECT * FROM products WHERE ?';
+  var t = new Table();
+
+  connection.query(query, { item_id: id }, function (err, res) {
+    console.log('Updated Inventory:\n--------------------------');
+
+    // sets up easy-table with current dataset
+    res.forEach(function (product) {
+      t.cell('Item ID', product.item_id);
+      t.cell('Name', product.product_name);
+      t.cell('Department', product.department_name);
+      t.cell('Price', product.price, Table.number(2));
+      t.cell('Qty', product.stock_quantity);
+      t.newRow();
+    });
+
+    // prints easy-table to screen
+    console.log(t.toString());
   });
 }
-
 // lists current products available for sale
 function listProducts() {
   var query = 'SELECT * FROM products';
@@ -48,8 +52,8 @@ function listProducts() {
 
     // prints easy-table to screen
     console.log(t.toString());
-    endConfirm();
   });
+  connection.end();
 }
 
 // views items with an inventory less than or equal to 5
@@ -70,8 +74,8 @@ function viewLowInv() {
     });
 
     console.log(t.toString());
-    endConfirm();
   });
+  connection.end();
 }
 
 // allows user to increase/decrease quantity of items currently in inventory
@@ -92,7 +96,6 @@ function addToInv() {
     for (var i = 0; i < res.length; i++) {
       idArr.push(res[i].item_id.toString());
     }
-    console.log(idArr);
 
     console.log(t.toString());
 
@@ -113,7 +116,7 @@ function addToInv() {
 
           // Do async stuff
           setTimeout(function () {
-            if (isNaN(parseInt(input, 10))) {
+            if (isNaN(parseInt(input, 10)) || parseInt(input, 10) <= 0) {
             // Pass the return value in the done callback
               done('You need to provide a number');
               return;
@@ -131,12 +134,14 @@ function addToInv() {
       connection.query(query, [
         { stock_quantity: newQty }, { item_id: answer.id }], function (err) {
           if (err) throw err;
-          endConfirm();
+          displayUpdates(answer.id);
+          connection.end();
         });
     });
   });
 }
 
+// allows user to add a new product (row) to the table
 function addNewProduct() {
   inquirer.prompt([
     {
@@ -159,9 +164,9 @@ function addNewProduct() {
 
           // Do async stuff
         setTimeout(function () {
-          if (isNaN(parseFloat(input))) {
+          if (isNaN(parseFloat(input)) || parseFloat(input) <= 0) {
             // Pass the return value in the done callback
-            done('You need to provide a number');
+            done('You need to provide a positive number');
             return;
           }
             // Pass the return value in the done callback
@@ -179,9 +184,9 @@ function addNewProduct() {
 
         // Do async stuff
         setTimeout(function () {
-          if (isNaN(parseInt(input, 10))) {
+          if (isNaN(parseInt(input, 10)) || parseInt(input, 10) <= 0) {
             // Pass the return value in the done callback
-            done('You need to provide a number');
+            done('You need to provide a positive number');
             return;
           }
           // Pass the return value in the done callback
@@ -201,11 +206,12 @@ function addNewProduct() {
     connection.query(query, product, function (err) {
       if (err) throw err;
       console.log('Product added!');
-      endConfirm();
+      connection.end();
     });
   });
 }
 
+// initializes application
 function startApp() {
   inquirer.prompt([
     {
@@ -227,6 +233,7 @@ function startApp() {
   });
 }
 
+// if connection to mySQL is successful, starts app
 connection.connect(function (err) {
   if (err) throw err;
   startApp();

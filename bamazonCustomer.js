@@ -1,6 +1,9 @@
+// adds necessary node packages
 var mysql = require('mysql');
 var prompt = require('prompt');
+var Table = require('easy-table');
 
+// sets up connection to the mySQL database
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -8,6 +11,7 @@ var connection = mysql.createConnection({
   database: 'bamazon'
 });
 
+// updates stock_quantity in the table and prints total price to console
 function completeOrder(id, qty, stock, price) {
   var newQty = stock - qty;
   var total = price * qty;
@@ -17,9 +21,11 @@ function completeOrder(id, qty, stock, price) {
     if (err) throw err;
   });
 
-  console.log('Thank you for your purchase. Your total is ' + total + '.');
+  console.log('Thank you for your purchase. Your total is $' + total.toFixed(2) + '.');
 }
 
+// checks if there are enough items in inv to complete purchase
+// if there are, completes the order. If not, restarts program.
 function invCheck(id, qty) {
   var query = 'SELECT stock_quantity, price FROM products WHERE ?';
   connection.query(query, { item_id: id }, function (err, res) {
@@ -34,6 +40,7 @@ function invCheck(id, qty) {
   });
 }
 
+// asks user which item they'd like to purchase along with how many of that item.
 function promptUser() {
   var schema = {
     properties: {
@@ -56,16 +63,23 @@ function promptUser() {
   });
 }
 
+// initializes the program
 function startApp() {
   connection.query('SELECT * FROM products', function (err, res) {
+    var t = new Table();
     if (err) throw err;
-    for (var i = 0; i < res.length; i++) {
-      console.log(res[i].item_id + ' ' + res[i].product_name + ' ' + res[i].price + ' ' + res[i].stock_quantity);
-    }
+    res.forEach(function (product) {
+      t.cell('Item ID', product.item_id);
+      t.cell('Name', product.product_name);
+      t.cell('Qty', product.stock_quantity);
+      t.newRow();
+    });
+    console.log(t.toString());
     promptUser();
   });
 }
 
+// connects to mySQL server and starts app if no errors are thrown.
 connection.connect(function (err) {
   if (err) throw err;
   startApp();
