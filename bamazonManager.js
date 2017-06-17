@@ -14,19 +14,19 @@ var connection = mysql.createConnection({
 // display updated table
 function displayUpdates(id) {
   var query = 'SELECT * FROM products WHERE ?';
-  var t = new Table();
+  var table = new Table();
 
   connection.query(query, { item_id: id }, function (err, res) {
     console.log('Updated Inventory:\n--------------------------');
 
     // sets up easy-table with current dataset
     res.forEach(function (product) {
-      t.cell('Item ID', product.item_id);
-      t.cell('Name', product.product_name);
-      t.cell('Department', product.department_name);
-      t.cell('Price', product.price, Table.number(2));
-      t.cell('Qty', product.stock_quantity);
-      t.newRow();
+      table.cell('Item ID', product.item_id);
+      table.cell('Name', product.product_name);
+      table.cell('Department', product.department_name);
+      table.cell('Price', product.price, Table.number(2));
+      table.cell('Qty', product.stock_quantity);
+      table.newRow();
     });
 
     // prints easy-table to screen
@@ -37,19 +37,19 @@ function displayUpdates(id) {
 // lists current products available for sale
 function listProducts() {
   var query = 'SELECT * FROM products';
-  var t = new Table();
+  var table = new Table();
 
   connection.query(query, function (err, res) {
     console.log('Current Product Inventory:\n--------------------------');
 
     // sets up easy-table with current dataset
     res.forEach(function (product) {
-      t.cell('Item ID', product.item_id);
-      t.cell('Name', product.product_name);
-      t.cell('Department', product.department_name);
-      t.cell('Price', product.price, Table.number(2));
-      t.cell('Qty', product.stock_quantity);
-      t.newRow();
+      table.cell('Item ID', product.item_id);
+      table.cell('Name', product.product_name);
+      table.cell('Department', product.department_name);
+      table.cell('Price', product.price, Table.number(2));
+      table.cell('Qty', product.stock_quantity);
+      table.newRow();
     });
 
     // prints easy-table to screen
@@ -61,18 +61,18 @@ function listProducts() {
 // views items with an inventory less than or equal to 5
 function viewLowInv() {
   var query = 'SELECT * FROM products WHERE stock_quantity <= 5';
-  var t = new Table();
+  var table = new Table();
 
   connection.query(query, function (err, res) {
     console.log('Low Inventory:\n--------------------------');
 
     res.forEach(function (product) {
-      t.cell('Item ID', product.item_id);
-      t.cell('Name', product.product_name);
-      t.cell('Department', product.department_name);
-      t.cell('Price', product.price, Table.number(2));
-      t.cell('Qty', product.stock_quantity);
-      t.newRow();
+      table.cell('Item ID', product.item_id);
+      table.cell('Name', product.product_name);
+      table.cell('Department', product.department_name);
+      table.cell('Price', product.price, Table.number(2));
+      table.cell('Qty', product.stock_quantity);
+      table.newRow();
     });
 
     console.log(t.toString());
@@ -83,16 +83,16 @@ function viewLowInv() {
 // allows user to increase/decrease quantity of items currently in inventory
 function addToInv() {
   var query = 'SELECT item_id, product_name, stock_quantity FROM products';
-  var t = new Table();
+  var table = new Table();
   var idArr = [];
 
   connection.query(query, function (err, res) {
     if (err) throw err;
     res.forEach(function (product) {
-      t.cell('Item ID', product.item_id);
-      t.cell('Name', product.product_name);
-      t.cell('Qty', product.stock_quantity);
-      t.newRow();
+      table.cell('Item ID', product.item_id);
+      table.cell('Name', product.product_name);
+      table.cell('Qty', product.stock_quantity);
+      table.newRow();
     });
 
     for (var i = 0; i < res.length; i++) {
