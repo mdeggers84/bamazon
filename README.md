@@ -2,8 +2,11 @@
 
 ## Bamazon!
 
-### demo movie
-https://drive.google.com/open?id=0B9kC4nlOm71idHVjSEpXNWg2aDA
+### Quick Start
+* Run Customer App: `npm run customer`
+* Run Manager App: `npm run manager`
+* Run Supervisor App: `npm run supervisor`
+
 
 ### bamazonCustomer.js
 On running the app, user is presented with a screen listing all items currently for sale.

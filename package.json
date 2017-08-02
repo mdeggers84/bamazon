@@ -4,7 +4,10 @@
   "description": "",
   "main": "bamazonCustomer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "customer": "node bamazonCustomer.js",
+    "manager": "node bamazonManager.js",
+    "supervisor": "node bamazonSupervisor.js"
   },
   "repository": {
     "type": "git",
