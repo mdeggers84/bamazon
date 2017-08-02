@@ -75,17 +75,17 @@ function promptUser() {
 // initializes the program
 function startApp() {
   connection.query('SELECT * FROM products', function (err, res) {
-    var t = new Table();
+    var table = new Table();
     if (err) throw err;
     res.forEach(function (product) {
-      t.cell('Item ID', product.item_id);
-      t.cell('Name', product.product_name);
-      t.cell('Dept. Name', product.department_name);
-      t.cell('Price', product.price, Table.number(2));
-      t.cell('Qty', product.stock_quantity, Table.number(0));
-      t.newRow();
+      table.cell('Item ID', product.item_id);
+      table.cell('Name', product.product_name);
+      table.cell('Dept. Name', product.department_name);
+      table.cell('Price', product.price, Table.number(2));
+      table.cell('Qty', product.stock_quantity, Table.number(0));
+      table.newRow();
     });
-    console.log(t.toString());
+    console.log(table.toString());
     promptUser();
   });
 }

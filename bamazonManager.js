@@ -30,7 +30,7 @@ function displayUpdates(id) {
     });
 
     // prints easy-table to screen
-    console.log(t.toString());
+    console.log(table.toString());
   });
 }
 
@@ -53,7 +53,7 @@ function listProducts() {
     });
 
     // prints easy-table to screen
-    console.log(t.toString());
+    console.log(table.toString());
   });
   connection.end();
 }
@@ -75,7 +75,7 @@ function viewLowInv() {
       table.newRow();
     });
 
-    console.log(t.toString());
+    console.log(table.toString());
   });
   connection.end();
 }
@@ -99,7 +99,7 @@ function addToInv() {
       idArr.push(res[i].item_id.toString());
     }
 
-    console.log(t.toString());
+    console.log(table.toString());
 
     inquirer.prompt([
       {
@@ -134,8 +134,8 @@ function addToInv() {
       query = 'UPDATE products SET ? WHERE ?';
 
       connection.query(query, [
-        { stock_quantity: newQty }, { item_id: answer.id }], function (err) {
-          if (err) throw err;
+        { stock_quantity: newQty }, { item_id: answer.id }], function (error) {
+          if (error) throw error;
           displayUpdates(answer.id);
           connection.end();
         });
